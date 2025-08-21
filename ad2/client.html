@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Website</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --text-color: #333;
+            --background-color: #f9f9f9;
+            --header-bg: #fff;
+            --footer-bg: #f1f1f1;
+        }
+        
+        .dark-mode {
+            --text-color: #f9f9f9;
+            --background-color: #333;
+            --header-bg: #222;
+            --footer-bg: #222;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--header-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 40px;
+            margin-right: 15px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--header-bg);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar.right {
+            order: 2;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-links {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .sidebar-links li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .sidebar-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--content-bg, var(--background-color));
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .hero-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .content-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--footer-bg);
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .footer-links {
+            margin: 15px 0;
+        }
+        
+        .footer-links a {
+            color: var(--text-color);
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s;
+        }
+        
+        .slide-in {
+            animation: slideIn 1s;
+        }
+        
+        .bounce {
+            animation: bounce 1s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="logo-container">
+            <img src="" alt="Logo" class="logo" id="header-logo">
+            <h1 id="header-title">Website Title</h1>
+        </div>
+        <nav>
+            <ul id="header-menu"></ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <h3 id="sidebar-title">Sidebar Title</h3>
+            <p id="sidebar-content">Sidebar content goes here.</p>
+            <ul class="sidebar-links" id="sidebar-links"></ul>
+        </aside>
+        
+        <main class="main-content" id="main-content">
+            <section class="hero">
+                <h1 id="main-title">Main Title</h1>
+                <img src="" alt="Hero Image" id="hero-image" class="hero-image">
+                <p id="main-content-text">Main content goes here.</p>
+                <img src="" alt="Content Image" id="content-image" class="content-image">
+                <a href="#" class="btn" id="content-button">Button</a>
+                
+                <div class="gallery" id="gallery"></div>
+            </section>
+        </main>
+    </div>
+    
+    <footer id="footer">
+        <div class="footer-links" id="footer-links"></div>
+        <p id="footer-text">Footer text goes here.</p>
+    </footer>
+
+    <script>
+        // Load data from localStorage
+        const loadWebsiteData = () => {
+            const data = localStorage.getItem('websiteData');
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        };
+
+        // Apply settings to the client page
+        const applySettings = () => {
+            const websiteData = loadWebsiteData();
+            if (!websiteData) return;
+            
+            // Apply header settings
+            document.getElementById('header-title').textContent = websiteData.header.title;
+            const headerLogo = document.getElementById('header-logo');
+            if (websiteData.header.logo) {
+                headerLogo.src = websiteData.header.logo;
+                headerLogo.style.display = 'block';
+            } else {
+                headerLogo.style.display = 'none';
+            }
+            document.getElementById('header').style.backgroundColor = websiteData.header.bgColor;
+            
+            // Build header menu
+            const headerMenu = document.getElementById('header-menu');
+            headerMenu.innerHTML = '';
+            websiteData.header.menuItems.forEach(item => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = item;
+                li.appendChild(a);
+                headerMenu.appendChild(li);
+            });
+            
+            // Apply sidebar settings
+            document.getElementById('sidebar-title').textContent = websiteData.sidebar.title;
+            document.getElementById('sidebar-content').textContent = websiteData.sidebar.content;
+            
+            // Build sidebar links
+            const sidebarLinks = document.getElementById('sidebar-links');
+            sidebarLinks.innerHTML = '';
+            websiteData.sidebar.links.forEach(link => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.textContent = link.text;
+                li.appendChild(a);
+                sidebarLinks.appendChild(li);
+            });
+            
+            // Set sidebar position
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('right');
+            if (websiteData.sidebar.position === 'right') {
+                sidebar.classList.add('right');
+                document.querySelector('.container').style.flexDirection = 'row-reverse';
+            } else {
+                document.querySelector('.container').style.flexDirection = 'row';
+            }
+            
+            // Apply content settings
+            document.getElementById('main-title').textContent = websiteData.content.title;
+            document.getElementById('main-content-text').textContent = websiteData.content.text;
+            document.getElementById('main-content').style.backgroundColor = websiteData.content.bgColor;
+            document.getElementById('content-button').textContent = websiteData.content.buttonText;
+            
+            // Apply footer settings
+            document.getElementById('footer-text').textContent = websiteData.footer.text;
+            document.getElementById('footer').style.backgroundColor = websiteData.footer.bgColor;
+            
+            // Build footer links
+            const footerLinks = document.getElementById('footer-links');
+            footerLinks.innerHTML = '';
+            websiteData.footer.links.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.textContent = link.text;
+                footerLinks.appendChild(a);
+            });
+            
+            // Apply animations
+            const elementsToAnimate = [
+                document.getElementById('header'),
+                document.getElementById('sidebar'),
+                document.getElementById('main-content'),
+                document.getElementById('footer')
+            ];
+            
+            elementsToAnimate.forEach(el => {
+                if (el) {
+                    el.classList.remove('fade-in', 'slide-in', 'bounce');
+                    if (websiteData.animations.type !== 'none') {
+                        el.classList.add(websiteData.animations.type);
+                        el.style.animationDuration = `${websiteData.animations.duration}ms`;
+                    }
+                }
+            });
+            
+            // Apply images
+            const heroImage = document.getElementById('hero-image');
+            if (websiteData.images.hero) {
+                heroImage.src = websiteData.images.hero;
+                heroImage.style.display = 'block';
+            } else {
+                heroImage.style.display = 'none';
+            }
+            
+            const contentImage = document.getElementById('content-image');
+            if (websiteData.images.content) {
+                contentImage.src = websiteData.images.content;
+                contentImage.style.display = 'block';
+            } else {
+                contentImage.style.display = 'none';
+            }
+            
+            // Build gallery
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            websiteData.images.gallery.forEach(imageUrl => {
+                if (imageUrl) {
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = 'Gallery Image';
+                    gallery.appendChild(img);
+                }
+            });
+            
+            // Apply styles
+            document.documentElement.style.setProperty('--primary-color', websiteData.styles.primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', websiteData.styles.secondaryColor);
+            document.documentElement.style.setProperty('--font-family', websiteData.styles.fontFamily);
+            
+            if (websiteData.styles.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        };
+
+        // Initialize the client page
+        window.onload = applySettings;
+    </script>
+</body>
+</html>

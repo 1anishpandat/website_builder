@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --background-color: #f9f9f9;
+            --header-bg: #fff;
+            --footer-bg: #f1f1f1;
+            --sidebar-bg: #2c3e50;
+            --admin-sidebar: #34495e;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --border-color: #ddd;
+            --card-bg: #fff;
+            --input-bg: #fff;
+        }
+        
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --text-color: #ecf0f1;
+            --background-color: #2c3e50;
+            --header-bg: #34495e;
+            --footer-bg: #34495e;
+            --sidebar-bg: #2c3e50;
+            --admin-sidebar: #22313f;
+            --border-color: #444;
+            --card-bg: #34495e;
+            --input-bg: #444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background-color: var(--admin-sidebar);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .admin-sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .admin-sidebar h2 i {
+            margin-right: 10px;
+        }
+        
+        .admin-sidebar ul {
+            list-style: none;
+        }
+        
+        .admin-sidebar li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-sidebar li i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .admin-sidebar li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-sidebar li.active {
+            background-color: var(--primary-color);
+            border-left: 4px solid white;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--background-color); /* Updated for dark mode */
+            overflow-y: auto;
+            transition: background-color 0.3s ease;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color); /* Updated for dark mode */
+        }
+        
+        .admin-header h1 {
+            color: var(--text-color); /* Updated for dark mode */
+            font-weight: 600;
+        }
+        
+        .admin-section {
+            display: none;
+            background-color: var(--card-bg); /* Updated for dark mode */
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .admin-section h3 {
+            margin-bottom: 20px;
+            color: var(--text-color); /* Updated for dark mode */
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-section h3 i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color); /* Updated for dark mode */
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color); /* Updated for dark mode */
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s, background-color 0.3s, color 0.3s;
+            background-color: var(--input-bg); /* Updated for dark mode */
+            color: var(--text-color); /* Updated for dark mode */
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #219653;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-neutral {
+            background-color: #95a5a6;
+        }
+        
+        .btn-neutral:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .color-picker {
+            height: 45px;
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid var(--border-color); /* Added for consistency */
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color); /* Updated for dark mode */
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--text-color); /* Updated for dark mode */
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Animation preview */
+        .animation-preview {
+            height: 120px;
+            border: 2px dashed var(--border-color); /* Updated for dark mode */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+            border-radius: 8px;
+            background-color: var(--input-bg); /* Updated for dark mode */
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+        
+        .preview-element {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Image upload */
+        .image-upload {
+            border: 2px dashed var(--border-color); /* Updated for dark mode */
+            padding: 25px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: border 0.3s, background-color 0.3s;
+            background-color: var(--input-bg); /* Updated for dark mode */
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .image-upload i {
+            font-size: 48px;
+            color: var(--border-color); /* Updated for dark mode */
+            margin-bottom: 15px;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            height: 150px;
+            background-color: var(--card-bg); /* Added for dark mode */
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item .actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .actions {
+            transform: translateY(0);
+        }
+        
+        .gallery-item .actions button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Preview Section */
+        .preview-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            height: 600px;
+            border: 2px solid var(--border-color); /* Updated for dark mode */
+            background: var(--card-bg); /* Updated for dark mode */
+            z-index: 1000;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            resize: both;
+            min-width: 300px;
+            min-height: 400px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .preview-header {
+            background: var(--admin-sidebar); /* Updated for dark mode */
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            transition: background 0.3s ease;
+        }
+        
+        .preview-header button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        
+        #preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
+            background-color: var(--background-color); /* Ensure iframe background matches */
+        }
+        
+        .preview-minimized {
+            height: 40px;
+        }
+        
+        .preview-minimized #preview-frame {
+            display: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .preview-container {
+                display: none; /* Hide preview on smaller screens by default */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+                height: auto;
+                padding: 10px 0;
+            }
+
+            .admin-sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .admin-sidebar li {
+                padding: 10px 15px;
+                margin: 5px;
+                border-left: none;
+                border-radius: 5px;
+            }
+
+            .admin-sidebar li.active {
+                border-left: none;
+                background-color: var(--primary-color);
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-header h1 {
+                margin-bottom: 15px;
+            }
+
+            .admin-content {
+                padding: 20px;
+            }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* More dynamic animation */
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.toast-warning {
+            background-color: var(--warning);
+        }
+
+        .toast.toast-danger {
+            background-color: var(--danger);
+        }
+        
+        .toast i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        /* Advanced controls */
+        .slider-with-value {
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-with-value input[type="range"] {
+            flex: 1;
+            margin-right: 15px;
+        }
+        
+        .slider-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .css-output {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        /* Switch toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+            <ul>
+                <li class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                <li data-section="header"><i class="fas fa-heading"></i> Header</li>
+                <li data-section="sidebar"><i class="fas fa-bars"></i> Sidebar</li>
+                <li data-section="content"><i class="fas fa-align-left"></i> Content</li>
+                <li data-section="footer"><i class="fas fa-shoe-prints"></i> Footer</li>
+                <li data-section="animations"><i class="fas fa-film"></i> Animations</li>
+                <li data-section="images"><i class="fas fa-images"></i> Media Library</li>
+                <li data-section="styles"><i class="fas fa-palette"></i> Styles</li>
+                <li data-section="advanced"><i class="fas fa-sliders-h"></i> Advanced</li>
+                <li data-section="settings"><i class="fas fa-cog"></i> Admin Settings</li>
+                <li onclick="window.open('client.html', '_blank')"><i class="fas fa-eye"></i> View Live Site</li>
+                <li onclick="exportData()"><i class="fas fa-download"></i> Export Data</li>
+                <li onclick="importData()"><i class="fas fa-upload"></i> Import Data</li>
+                <li onclick="simulateLogout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+        </div>
+        
+        <div class="admin-content">
+            <div class="admin-header">
+                <h1>Website Customization Dashboard</h1>
+                <button class="btn btn-success" onclick="saveAllSettings()"><i class="fas fa-save"></i> Save All Changes</button>
+            </div>
+            
+            <div class="admin-section active" id="dashboard-section">
+                <h3><i class="fas fa-tachometer-alt"></i> Dashboard</h3>
+                <div class="tabs">
+                    <div class="tab active" data-tab="overview">Overview</div>
+                    <div class="tab" data-tab="analytics">Analytics</div>
+                    <div class="tab" data-tab="settings">Quick Settings</div>
+                </div>
+                
+                <div class="tab-content active" id="overview-tab">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="background: linear-gradient(135deg, var(--primary-color), var(--admin-sidebar)); color: white; padding: 20px; border-radius: 8px;">
+                            <h3><i class="fas fa-eye"></i> Site Views</h3>
+                            <p style="font-size: 32px; margin: 10px 0;">1,254</p>
+                            <p><i class="fas fa-arrow-up"></i> 12% from last week</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, var(--secondary-color), var(--success)); color: white; padding: 20px; border-radius: 8px;">
+                            <h3><i class="fas fa-image"></i> Media Items</h3>
+                            <p style="font-size: 32px; margin: 10px 0;">42</p>
+                            <p><i class="fas fa-plus"></i> Add more images</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, var(--accent-color), var(--danger)); color: white; padding: 20px; border-radius: 8px;">
+                            <h3><i class="fas fa-paint-brush"></i> Customizations</h3>
+                            <p style="font-size: 32px; margin: 10px 0;">18</p>
+                            <p><i class="fas fa-check"></i> All saved</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Recent Activity</h4>
+                        <ul style="list-style: none; margin-top: 15px;">
+                            <li style="padding: 10px; border-left: 3px solid var(--primary-color); margin-bottom: 10px; background-color: var(--input-bg);">
+                                <i class="fas fa-save" style="color: var(--primary-color);"></i> Header settings updated - 2 hours ago
+                            </li>
+                            <li style="padding: 10px; border-left: 3px solid var(--success); margin-bottom: 10px; background-color: var(--input-bg);">
+                                <i class="fas fa-image" style="color: var(--success);"></i> New image added to gallery - 5 hours ago
+                            </li>
+                            <li style="padding: 10px; border-left: 3px solid var(--accent-color); margin-bottom: 10px; background-color: var(--input-bg);">
+                                <i class="fas fa-palette" style="color: var(--accent-color);"></i> Color scheme changed - Yesterday
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="analytics-tab">
+                    <p>Website analytics would be displayed here. This could include:</p>
+                    <ul style="margin: 15px 0 15px 20px;">
+                        <li>Visitor statistics</li>
+                        <li>Popular pages</li>
+                        <li>User engagement metrics</li>
+                        <li>Traffic sources</li>
+                    </ul>
+                    <div style="background-color: var(--input-bg); padding: 20px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-chart-line" style="font-size: 48px; color: var(--border-color); margin-bottom: 15px;"></i>
+                        <p>Analytics integration would be implemented in a production environment</p>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="settings-tab">
+                    <div class="form-group">
+                        <label for="site-title">Site Title</label>
+                        <input type="text" id="site-title" class="form-control" placeholder="Website Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="site-description">Site Description</label>
+                        <textarea id="site-description" class="form-control" rows="3" placeholder="Website description for SEO"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="site-favicon">Favicon URL</label>
+                        <input type="text" id="site-favicon" class="form-control" placeholder="https://example.com/favicon.ico">
+                    </div>
+                    <button class="btn" onclick="saveGeneralSettings()"><i class="fas fa-save"></i> Save General Settings</button>
+                </div>
+            </div>
+            
+            <div class="admin-section" id="header-section">
+                <h3><i class="fas fa-heading"></i> Header Customization</h3>
+                <div class="form-group">
+                    <label for="header-title">Header Title</label>
+                    <input type="text" id="header-title" class="form-control" placeholder="Website Title">
+                </div>
+                <div class="form-group">
+                    <label for="header-logo">Header Logo URL</label>
+                    <div class="image-upload" onclick="document.getElementById('header-logo-input').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag & drop</p>
+                        <input type="file" id="header-logo-input" style="display: none;" onchange="handleLogoUpload(this)">
+                    </div>
+                    <input type="text" id="header-logo" class="form-control" placeholder="https://example.com/logo.png">
+                </div>
+                <div class="form-group">
+                    <label for="header-bg">Header Background Color</label>
+                    <input type="color" id="header-bg" class="color-picker" value="#ffffff">
+                </div>
+                <div class="form-group">
+                    <label for="header-menu">Menu Items (comma separated)</label>
+                    <input type="text" id="header-menu" class="form-control" placeholder="Home, About, Services, Contact">
+                </div>
+                <div class="form-group">
+                    <label for="header-sticky">Sticky Header</label>
+                    <label class="switch">
+                        <input type="checkbox" id="header-sticky">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn" onclick="saveHeaderSettings()"><i class="fas fa-save"></i> Save Header Settings</button>
+            </div>
+            
+            <div class="admin-section" id="sidebar-section">
+                <h3><i class="fas fa-bars"></i> Sidebar Customization</h3>
+                <div class="form-group">
+                    <label for="sidebar-title">Sidebar Title</label>
+                    <input type="text" id="sidebar-title" class="form-control" placeholder="Sidebar Title">
+                </div>
+                <div class="form-group">
+                    <label for="sidebar-content">Sidebar Content</label>
+                    <textarea id="sidebar-content" class="form-control" rows="5" placeholder="Sidebar content..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sidebar-bg">Sidebar Background Color</label>
+                    <input type="color" id="sidebar-bg" class="color-picker" value="#2c3e50">
+                </div>
+                <div class="form-group">
+                    <label for="sidebar-text-color">Sidebar Text Color</label>
+                    <input type="color" id="sidebar-text-color" class="color-picker" value="#ffffff">
+                </div>
+                <div class="form-group">
+                    <label for="sidebar-links">Sidebar Links (format: Link Text,URL; one per line)</label>
+                    <textarea id="sidebar-links" class="form-control" rows="5" placeholder="About,about.html&#10;Contact,contact.html"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sidebar-position">Sidebar Position</label>
+                    <select id="sidebar-position" class="form-control">
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="saveSidebarSettings()"><i class="fas fa-save"></i> Save Sidebar Settings</button>
+            </div>
+            
+            <div class="admin-section" id="content-section">
+                <h3><i class="fas fa-align-left"></i> Content Customization</h3>
+                <div class="form-group">
+                    <label for="content-title">Content Title</label>
+                    <input type="text" id="content-title" class="form-control" placeholder="Content Title">
+                </div>
+                <div class="form-group">
+                    <label for="content-text">Content Text</label>
+                    <textarea id="content-text" class="form-control" rows="8" placeholder="Your content here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="content-bg">Content Background Color</label>
+                    <input type="color" id="content-bg" class="color-picker" value="#f9f9f9">
+                </div>
+                <div class="form-group">
+                    <label for="content-button-text">Button Text</label>
+                    <input type="text" id="content-button-text" class="form-control" placeholder="Learn More">
+                </div>
+                <div class="form-group">
+                    <label for="content-button-url">Button URL</label>
+                    <input type="text" id="content-button-url" class="form-control" placeholder="https://example.com/learn-more">
+                </div>
+                <div class="form-group">
+                    <label for="content-button-color">Button Color</label>
+                    <input type="color" id="content-button-color" class="color-picker" value="#3498db">
+                </div>
+                <button class="btn" onclick="saveContentSettings()"><i class="fas fa-save"></i> Save Content Settings</button>
+            </div>
+            
+            <div class="admin-section" id="footer-section">
+                <h3><i class="fas fa-shoe-prints"></i> Footer Customization</h3>
+                <div class="form-group">
+                    <label for="footer-text">Footer Text</label>
+                    <input type="text" id="footer-text" class="form-control" placeholder="© 2023 My Website">
+                </div>
+                <div class="form-group">
+                    <label for="footer-bg">Footer Background Color</label>
+                    <input type="color" id="footer-bg" class="color-picker" value="#f1f1f1">
+                </div>
+                <div class="form-group">
+                    <label for="footer-links">Footer Links (format: Link Text,URL; one per line)</label>
+                    <textarea id="footer-links" class="form-control" rows="5" placeholder="Privacy Policy,privacy.html&#10;Terms of Service,terms.html"></textarea>
+                </div>
+                <button class="btn" onclick="saveFooterSettings()"><i class="fas fa-save"></i> Save Footer Settings</button>
+            </div>
+            
+            <div class="admin-section" id="animations-section">
+                <h3><i class="fas fa-film"></i> Animation Settings</h3>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="page-animations">Page Animations</div>
+                    <div class="tab" data-tab="element-animations">Element Animations</div>
+                    <div class="tab" data-tab="scroll-animations">Scroll Animations</div>
+                </div>
+                
+                <div class="tab-content active" id="page-animations-tab">
+                    <div class="form-group">
+                        <label for="page-load-animation">Page Load Animation</label>
+                        <select id="page-load-animation" class="form-control">
+                            <option value="none">None</option>
+                            <option value="fade">Fade In</option>
+                            <option value="slide">Slide In</option>
+                            <option value="zoom">Zoom In</option>
+                            <option value="bounce">Bounce</option>
+                            <option value="flip">Flip</option>
+                            <option value="rotate">Rotate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="page-animation-duration">Animation Duration (ms)</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="page-animation-duration" min="100" max="2000" value="1000" step="100">
+                            <span class="slider-value" id="page-duration-value">1000ms</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="page-animation-delay">Animation Delay (ms)</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="page-animation-delay" min="0" max="1000" value="0" step="100">
+                            <span class="slider-value" id="page-delay-value">0ms</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="element-animations-tab">
+                    <div class="form-group">
+                        <label for="element-animation">Element Animation on Hover</label>
+                        <select id="element-animation" class="form-control">
+                            <option value="none">None</option>
+                            <option value="pulse">Pulse</option>
+                            <option value="bounce">Bounce</option>
+                            <option value="shake">Shake</option>
+                            <option value="swing">Swing</option>
+                            <option value="tada">Tada</option>
+                            <option value="wobble">Wobble</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="button-animation">Button Animation</label>
+                        <select id="button-animation" class="form-control">
+                            <option value="none">None</option>
+                            <option value="fill">Fill Effect</option>
+                            <option value="sweep">Sweep Effect</option>
+                            <option value="radial">Radial Effect</option>
+                            <option value="shine">Shine Effect</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="scroll-animations-tab">
+                    <div class="form-group">
+                        <label for="scroll-animation">Scroll Animation</label>
+                        <select id="scroll-animation" class="form-control">
+                            <option value="none">None</option>
+                            <option value="fade">Fade In on Scroll</option>
+                            <option value="slide">Slide In on Scroll</option>
+                            <option value="zoom">Zoom In on Scroll</option>
+                            <option value="parallax">Parallax Effect</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="scroll-speed">Parallax Speed</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="scroll-speed" min="0.1" max="2" value="0.5" step="0.1">
+                            <span class="slider-value" id="scroll-speed-value">0.5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animation-preview">
+                    <div class="preview-element" id="animation-preview-element">Preview</div>
+                </div>
+                
+                <button class="btn" onclick="saveAnimationSettings()"><i class="fas fa-save"></i> Save Animation Settings</button>
+            </div>
+            
+            <div class="admin-section" id="images-section">
+                <h3><i class="fas fa-images"></i> Media Library</h3>
+                
+                <div class="image-upload" onclick="document.getElementById('media-upload').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload or drag & drop</p>
+                    <p>Supports JPG, PNG, GIF, SVG (Max 5MB)</p>
+                    <input type="file" id="media-upload" multiple style="display: none;" onchange="handleMediaUpload(this)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="hero-image">Hero Image URL</label>
+                    <input type="text" id="hero-image" class="form-control" placeholder="https://example.com/hero.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="content-image">Content Image URL</label>
+                    <input type="text" id="content-image" class="form-control" placeholder="https://example.com/content.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="gallery-images">Gallery Images (comma separated URLs)</label>
+                    <textarea id="gallery-images" class="form-control" rows="3" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"></textarea>
+                </div>
+                
+                <h4>Media Library</h4>
+                <div class="gallery-grid" id="media-library">
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/150" alt="Placeholder">
+                        <div class="actions">
+                            <button title="Use in header" onclick="useImage('https://via.placeholder.com/150', 'header')"><i class="fas fa-heading"></i></button>
+                            <button title="Use in content" onclick="useImage('https://via.placeholder.com/150', 'content')"><i class="fas fa-align-left"></i></button>
+                            <button title="Delete" onclick="deleteMedia(1)"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="saveImageSettings()"><i class="fas fa-save"></i> Save Image Settings</button>
+            </div>
+            
+            <div class="admin-section" id="styles-section">
+                <h3><i class="fas fa-palette"></i> Global Styles</h3>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="colors">Colors</div>
+                    <div class="tab" data-tab="typography">Typography</div>
+                    <div class="tab" data-tab="spacing">Spacing</div>
+                    <div class="tab" data-tab="custom-css">Custom CSS</div>
+                </div>
+                
+                <div class="tab-content active" id="colors-tab">
+                    <div class="form-group">
+                        <label for="primary-color">Primary Color</label>
+                        <input type="color" id="primary-color" class="color-picker" value="#3498db">
+                    </div>
+                    <div class="form-group">
+                        <label for="secondary-color">Secondary Color</label>
+                        <input type="color" id="secondary-color" class="color-picker" value="#2ecc71">
+                    </div>
+                    <div class="form-group">
+                        <label for="accent-color">Accent Color</label>
+                        <input type="color" id="accent-color" class="color-picker" value="#e74c3c">
+                    </div>
+                    <div class="form-group">
+                        <label for="text-color">Text Color</label>
+                        <input type="color" id="text-color" class="color-picker" value="#333333">
+                    </div>
+                    <div class="form-group">
+                        <label for="background-color">Background Color</label>
+                        <input type="color" id="background-color" class="color-picker" value="#f9f9f9">
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="typography-tab">
+                    <div class="form-group">
+                        <label for="font-family">Font Family</label>
+                        <select id="font-family" class="form-control">
+                            <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI (Default)</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="'Georgia', serif">Georgia</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                            <option value="'Verdana', sans-serif">Verdana</option>
+                            <option value="'Roboto', sans-serif">Roboto (Google Font)</option>
+                            <option value="'Open Sans', sans-serif">Open Sans (Google Font)</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Google Font)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="font-size">Base Font Size</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="font-size" min="12" max="24" value="16" step="1">
+                            <span class="slider-value" id="font-size-value">16px</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="line-height">Line Height</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="line-height" min="1" max="2" value="1.6" step="0.1">
+                            <span class="slider-value" id="line-height-value">1.6</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="spacing-tab">
+                    <div class="form-group">
+                        <label for="container-width">Container Max Width</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="container-width" min="800" max="1400" value="1200" step="50">
+                            <span class="slider-value" id="container-width-value">1200px</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="spacing-unit">Spacing Unit</label>
+                        <div class="slider-with-value">
+                            <input type="range" id="spacing-unit" min="4" max="16" value="8" step="2">
+                            <span class="slider-value" id="spacing-unit-value">8px</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="custom-css-tab">
+                    <div class="form-group">
+                        <label for="custom-css">Custom CSS</label>
+                        <textarea id="custom-css" class="form-control" rows="10" placeholder="Add your custom CSS here"></textarea>
+                    </div>
+                    <div class="css-output" id="css-output">
+                        /* Generated CSS will appear here */
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="saveStyleSettings()"><i class="fas fa-save"></i> Save Style Settings</button>
+            </div>
+            
+            <div class="admin-section" id="advanced-section">
+                <h3><i class="fas fa-sliders-h"></i> Advanced Settings</h3>
+                
+                <div class="form-group">
+                    <label for="custom-js">Custom JavaScript</label>
+                    <textarea id="custom-js" class="form-control" rows="10" placeholder="Add your custom JavaScript here"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="meta-tags">Meta Tags</label>
+                    <textarea id="meta-tags" class="form-control" rows="5" placeholder="<meta name='description' content=''>"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="analytics-code">Analytics Code</label>
+                    <textarea id="analytics-code" class="form-control" rows="5" placeholder="Paste your Google Analytics or other tracking code here"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="seo-settings">SEO Settings</label>
+                    <textarea id="seo-settings" class="form-control" rows="5" placeholder="SEO settings would be configured here"></textarea>
+                </div>
+                
+                <button class="btn btn-success" onclick="saveAdvancedSettings()"><i class="fas fa-save"></i> Save Advanced Settings</button>
+                <button class="btn btn-danger" onclick="resetSettings()" style="margin-left: 10px;"><i class="fas fa-trash"></i> Reset to Defaults</button>
+            </div>
+
+            <div class="admin-section" id="settings-section">
+                <h3><i class="fas fa-cog"></i> Admin Panel Settings</h3>
+                <div class="form-group">
+                    <label for="dark-mode-toggle">Dark Mode</label>
+                    <label class="switch">
+                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="preview-panel-visibility">Show Preview Panel</label>
+                    <label class="switch">
+                        <input type="checkbox" id="preview-panel-visibility" onchange="togglePreviewPanelVisibility()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn btn-neutral" onclick="saveAdminSettings()"><i class="fas fa-save"></i> Save Admin Settings</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="preview-container" id="preview-container">
+        <div class="preview-header" id="preview-header">
+            <span>Client Preview</span>
+            <div>
+                <button onclick="togglePreviewMinimize()"><i class="fas fa-window-minimize"></i></button>
+                <button onclick="refreshPreview()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+        </div>
+        <iframe id="preview-frame" src="client.html"></iframe>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Settings saved successfully!</span>
+    </div>
+
+    <script>
+        // Database simulation using localStorage
+        const initializeDatabase = () => {
+            if (!localStorage.getItem('websiteData')) {
+                const defaultData = {
+                    general: {
+                        siteTitle: 'My Custom Website',
+                        siteDescription: 'A highly customizable website',
+                        favicon: ''
+                    },
+                    header: {
+                        title: 'My Custom Website',
+                        logo: '',
+                        bgColor: '#ffffff',
+                        menuItems: ['Home', 'About', 'Services', 'Contact'],
+                        sticky: false
+                    },
+                    sidebar: {
+                        title: 'Sidebar',
+                        content: 'This is the sidebar content. You can edit it from the admin panel.',
+                        bgColor: '#2c3e50',
+                        textColor: '#ffffff',
+                        links: [
+                            { text: 'About', url: 'about.html' },
+                            { text: 'Contact', url: 'contact.html' }
+                        ],
+                        position: 'left'
+                    },
+                    content: {
+                        title: 'Welcome to Our Website',
+                        text: 'This is the main content area. You can customize it from the admin panel.',
+                        bgColor: '#f9f9f9',
+                        buttonText: 'Learn More',
+                        buttonUrl: '#',
+                        buttonColor: '#3498db'
+                    },
+                    footer: {
+                        text: '© 2023 My Custom Website',
+                        bgColor: '#f1f1f1',
+                        links: [
+                            { text: 'Privacy Policy', url: 'privacy.html' },
+                            { text: 'Terms of Service', url: 'terms.html' }
+                        ]
+                    },
+                    animations: {
+                        pageAnimation: 'fade',
+                        pageDuration: 1000,
+                        pageDelay: 0,
+                        elementAnimation: 'pulse',
+                        buttonAnimation: 'fill',
+                        scrollAnimation: 'fade',
+                        scrollSpeed: 0.5
+                    },
+                    images: {
+                        hero: '',
+                        content: '',
+                        gallery: []
+                    },
+                    styles: {
+                        primaryColor: '#3498db',
+                        secondaryColor: '#2ecc71',
+                        accentColor: '#e74c3c',
+                        textColor: '#333333',
+                        backgroundColor: '#f9f9f9',
+                        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        fontSize: 16,
+                        lineHeight: 1.6,
+                        containerWidth: 1200,
+                        spacingUnit: 8,
+                        customCSS: ''
+                    },
+                    advanced: {
+                        customJS: '',
+                        metaTags: '',
+                        analyticsCode: '',
+                        seoSettings: ''
+                    },
+                    media: [
+                        {
+                            id: 1,
+                            url: 'https://via.placeholder.com/150',
+                            name: 'placeholder.jpg',
+                            type: 'image',
+                            uploadedAt: new Date().toISOString()
+                        }
+                    ],
+                    adminSettings: {
+                        darkMode: false,
+                        previewPanelVisible: true
+                    }
+                };
+                localStorage.setItem('websiteData', JSON.stringify(defaultData));
+            }
+            return JSON.parse(localStorage.getItem('websiteData'));
+        };
+
+        let websiteData = initializeDatabase();
+
+        // Navigation between admin sections
+        document.querySelectorAll('.admin-sidebar li').forEach(item => {
+            if (item.onclick) return; // Skip items with existing click handlers
+            
+            item.addEventListener('click', () => {
+                // Update active nav item
+                document.querySelectorAll('.admin-sidebar li').forEach(li => {
+                    li.classList.remove('active');
+                });
+                item.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = item.getAttribute('data-section');
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                if (sectionId) { // Ensure sectionId exists for direct section links
+                    document.getElementById(`${sectionId}-section`).classList.add('active');
+                }
+            });
+        });
+
+        // Tab functionality
+        document.querySelectorAll('.tabs').forEach(tabContainer => {
+            tabContainer.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabContainer.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    tab.classList.add('active');
+                    
+                    const tabId = tab.getAttribute('data-tab');
+                    const parentSection = tab.closest('.admin-section');
+                    parentSection.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        });
+
+        // Range sliders with value display
+        const setupRangeSliders = () => {
+            const rangeSliders = document.querySelectorAll('input[type="range"]');
+            rangeSliders.forEach(slider => {
+                const valueDisplay = document.getElementById(`${slider.id}-value`);
+                if (valueDisplay) {
+                    const updateDisplay = () => {
+                        let unit = '';
+                        if (slider.id.includes('duration')) unit = 'ms';
+                        else if (slider.id.includes('size')) unit = 'px';
+                        else if (slider.id.includes('spacing-unit')) unit = 'px';
+                        else if (slider.id.includes('container-width')) unit = 'px';
+                        valueDisplay.textContent = slider.value + unit;
+                    };
+                    updateDisplay(); // Initial update
+                    slider.addEventListener('input', updateDisplay);
+
+                    // Live update for animation preview on duration change
+                    if (slider.id === 'page-animation-duration') {
+                        slider.addEventListener('input', updateAnimationPreview);
+                    }
+                }
+            });
+        };
+
+        // Animation preview
+        function updateAnimationPreview() {
+            const animationType = document.getElementById('page-load-animation').value;
+            const previewElement = document.getElementById('animation-preview-element');
+            
+            // Reset classes and styles for animation
+            previewElement.className = 'preview-element';
+            previewElement.style.animation = ''; // Clear existing animation
+
+            // Apply new animation
+            if (animationType !== 'none') {
+                const duration = document.getElementById('page-animation-duration').value;
+                const delay = document.getElementById('page-animation-delay').value;
+                
+                previewElement.style.animation = `${animationType} ${duration}ms forwards`; // Use forwards to keep end state
+                // Add a class for the animation so it can be re-triggered
+                previewElement.classList.add(animationType); 
+                
+                // Re-trigger animation on change for immediate preview
+                void previewElement.offsetWidth; // Trigger reflow
+            }
+        }
+
+        document.getElementById('page-load-animation').addEventListener('change', updateAnimationPreview);
+        document.getElementById('page-animation-duration').addEventListener('input', updateAnimationPreview);
+        document.getElementById('page-animation-delay').addEventListener('input', updateAnimationPreview);
+
+
+        // Load current settings into form
+        const loadSettings = () => {
+            // General settings
+            document.getElementById('site-title').value = websiteData.general.siteTitle;
+            document.getElementById('site-description').value = websiteData.general.siteDescription;
+            document.getElementById('site-favicon').value = websiteData.general.favicon;
+            
+            // Header settings
+            document.getElementById('header-title').value = websiteData.header.title;
+            document.getElementById('header-logo').value = websiteData.header.logo;
+            document.getElementById('header-bg').value = websiteData.header.bgColor;
+            document.getElementById('header-menu').value = websiteData.header.menuItems.join(', ');
+            document.getElementById('header-sticky').checked = websiteData.header.sticky;
+            
+            // Sidebar settings
+            document.getElementById('sidebar-title').value = websiteData.sidebar.title;
+            document.getElementById('sidebar-content').value = websiteData.sidebar.content;
+            document.getElementById('sidebar-bg').value = websiteData.sidebar.bgColor;
+            document.getElementById('sidebar-text-color').value = websiteData.sidebar.textColor;
+            document.getElementById('sidebar-position').value = websiteData.sidebar.position;
+            
+            // Format sidebar links for textarea
+            const sidebarLinksText = websiteData.sidebar.links.map(link => `${link.text},${link.url}`).join('\n');
+            document.getElementById('sidebar-links').value = sidebarLinksText;
+            
+            // Content settings
+            document.getElementById('content-title').value = websiteData.content.title;
+            document.getElementById('content-text').value = websiteData.content.text;
+            document.getElementById('content-bg').value = websiteData.content.bgColor;
+            document.getElementById('content-button-text').value = websiteData.content.buttonText;
+            document.getElementById('content-button-url').value = websiteData.content.buttonUrl;
+            document.getElementById('content-button-color').value = websiteData.content.buttonColor;
+            
+            // Footer settings
+            document.getElementById('footer-text').value = websiteData.footer.text;
+            document.getElementById('footer-bg').value = websiteData.footer.bgColor;
+            
+            // Format footer links for textarea
+            const footerLinksText = websiteData.footer.links.map(link => `${link.text},${link.url}`).join('\n');
+            document.getElementById('footer-links').value = footerLinksText;
+            
+            // Animation settings
+            document.getElementById('page-load-animation').value = websiteData.animations.pageAnimation;
+            document.getElementById('page-animation-duration').value = websiteData.animations.pageDuration;
+            document.getElementById('page-animation-delay').value = websiteData.animations.pageDelay;
+            document.getElementById('element-animation').value = websiteData.animations.elementAnimation;
+            document.getElementById('button-animation').value = websiteData.animations.buttonAnimation;
+            document.getElementById('scroll-animation').value = websiteData.animations.scrollAnimation;
+            document.getElementById('scroll-speed').value = websiteData.animations.scrollSpeed;
+            
+            // Image settings
+            document.getElementById('hero-image').value = websiteData.images.hero;
+            document.getElementById('content-image').value = websiteData.images.content;
+            document.getElementById('gallery-images').value = websiteData.images.gallery.join(', ');
+            
+            // Style settings
+            document.getElementById('primary-color').value = websiteData.styles.primaryColor;
+            document.getElementById('secondary-color').value = websiteData.styles.secondaryColor;
+            document.getElementById('accent-color').value = websiteData.styles.accentColor;
+            document.getElementById('text-color').value = websiteData.styles.textColor;
+            document.getElementById('background-color').value = websiteData.styles.backgroundColor;
+            document.getElementById('font-family').value = websiteData.styles.fontFamily;
+            document.getElementById('font-size').value = websiteData.styles.fontSize;
+            document.getElementById('line-height').value = websiteData.styles.lineHeight;
+            document.getElementById('container-width').value = websiteData.styles.containerWidth;
+            document.getElementById('spacing-unit').value = websiteData.styles.spacingUnit;
+            document.getElementById('custom-css').value = websiteData.styles.customCSS;
+            
+            // Advanced settings
+            document.getElementById('custom-js').value = websiteData.advanced.customJS;
+            document.getElementById('meta-tags').value = websiteData.advanced.metaTags;
+            document.getElementById('analytics-code').value = websiteData.advanced.analyticsCode;
+            document.getElementById('seo-settings').value = websiteData.advanced.seoSettings;
+
+            // Admin settings
+            document.getElementById('dark-mode-toggle').checked = websiteData.adminSettings.darkMode;
+            document.getElementById('preview-panel-visibility').checked = websiteData.adminSettings.previewPanelVisible;
+            
+            // Apply dark mode immediately
+            applyDarkMode(websiteData.adminSettings.darkMode);
+            // Apply preview panel visibility immediately
+            applyPreviewPanelVisibility(websiteData.adminSettings.previewPanelVisible);
+
+            // Update all range value displays after loading
+            setupRangeSliders(); 
+            
+            // Update CSS output
+            updateCssOutput();
+            
+            // Update animation preview
+            updateAnimationPreview();
+            
+            // Load media library
+            loadMediaLibrary();
+            
+            // Apply font family globally
+            document.body.style.setProperty('--font-family', websiteData.styles.fontFamily);
+        };
+
+        // Save functions for each section
+        const saveGeneralSettings = () => {
+            websiteData.general.siteTitle = document.getElementById('site-title').value;
+            websiteData.general.siteDescription = document.getElementById('site-description').value;
+            websiteData.general.favicon = document.getElementById('site-favicon').value;
+            
+            saveToDatabase();
+            showToast('General settings saved successfully!', 'success');
+        };
+
+        const saveHeaderSettings = () => {
+            websiteData.header.title = document.getElementById('header-title').value;
+            websiteData.header.logo = document.getElementById('header-logo').value;
+            websiteData.header.bgColor = document.getElementById('header-bg').value;
+            websiteData.header.menuItems = document.getElementById('header-menu').value.split(',').map(item => item.trim());
+            websiteData.header.sticky = document.getElementById('header-sticky').checked;
+            
+            saveToDatabase();
+            showToast('Header settings saved successfully!', 'success');
+        };
+
+        const saveSidebarSettings = () => {
+            websiteData.sidebar.title = document.getElementById('sidebar-title').value;
+            websiteData.sidebar.content = document.getElementById('sidebar-content').value;
+            websiteData.sidebar.bgColor = document.getElementById('sidebar-bg').value;
+            websiteData.sidebar.textColor = document.getElementById('sidebar-text-color').value;
+            websiteData.sidebar.position = document.getElementById('sidebar-position').value;
+            
+            // Parse sidebar links
+            const linksText = document.getElementById('sidebar-links').value;
+            websiteData.sidebar.links = [];
+            
+            if (linksText.trim()) {
+                linksText.split('\n').forEach(line => {
+                    const parts = line.split(',');
+                    if (parts.length >= 2) {
+                        websiteData.sidebar.links.push({
+                            text: parts[0].trim(),
+                            url: parts[1].trim()
+                        });
+                    }
+                });
+            }
+            
+            saveToDatabase();
+            showToast('Sidebar settings saved successfully!', 'success');
+        };
+
+        const saveContentSettings = () => {
+            websiteData.content.title = document.getElementById('content-title').value;
+            websiteData.content.text = document.getElementById('content-text').value;
+            websiteData.content.bgColor = document.getElementById('content-bg').value;
+            websiteData.content.buttonText = document.getElementById('content-button-text').value;
+            websiteData.content.buttonUrl = document.getElementById('content-button-url').value;
+            websiteData.content.buttonColor = document.getElementById('content-button-color').value;
+            
+            saveToDatabase();
+            showToast('Content settings saved successfully!', 'success');
+        };
+
+        const saveFooterSettings = () => {
+            websiteData.footer.text = document.getElementById('footer-text').value;
+            websiteData.footer.bgColor = document.getElementById('footer-bg').value;
+            
+            // Parse footer links
+            const linksText = document.getElementById('footer-links').value;
+            websiteData.footer.links = [];
+            
+            if (linksText.trim()) {
+                linksText.split('\n').forEach(line => {
+                    const parts = line.split(',');
+                    if (parts.length >= 2) {
+                        websiteData.footer.links.push({
+                            text: parts[0].trim(),
+                            url: parts[1].trim()
+                        });
+                    }
+                });
+            }
+            
+            saveToDatabase();
+            showToast('Footer settings saved successfully!', 'success');
+        };
+
+        const saveAnimationSettings = () => {
+            websiteData.animations.pageAnimation = document.getElementById('page-load-animation').value;
+            websiteData.animations.pageDuration = parseInt(document.getElementById('page-animation-duration').value);
+            websiteData.animations.pageDelay = parseInt(document.getElementById('page-animation-delay').value);
+            websiteData.animations.elementAnimation = document.getElementById('element-animation').value;
+            websiteData.animations.buttonAnimation = document.getElementById('button-animation').value;
+            websiteData.animations.scrollAnimation = document.getElementById('scroll-animation').value;
+            websiteData.animations.scrollSpeed = parseFloat(document.getElementById('scroll-speed').value);
+            
+            saveToDatabase();
+            showToast('Animation settings saved successfully!', 'success');
+        };
+
+        const saveImageSettings = () => {
+            websiteData.images.hero = document.getElementById('hero-image').value;
+            websiteData.images.content = document.getElementById('content-image').value;
+            websiteData.images.gallery = document.getElementById('gallery-images').value.split(',').map(url => url.trim()).filter(url => url !== '');
+            
+            saveToDatabase();
+            showToast('Image settings saved successfully!', 'success');
+        };
+
+        const saveStyleSettings = () => {
+            websiteData.styles.primaryColor = document.getElementById('primary-color').value;
+            websiteData.styles.secondaryColor = document.getElementById('secondary-color').value;
+            websiteData.styles.accentColor = document.getElementById('accent-color').value;
+            websiteData.styles.textColor = document.getElementById('text-color').value;
+            websiteData.styles.backgroundColor = document.getElementById('background-color').value;
+            websiteData.styles.fontFamily = document.getElementById('font-family').value;
+            websiteData.styles.fontSize = parseInt(document.getElementById('font-size').value);
+            websiteData.styles.lineHeight = parseFloat(document.getElementById('line-height').value);
+            websiteData.styles.containerWidth = parseInt(document.getElementById('container-width').value);
+            websiteData.styles.spacingUnit = parseInt(document.getElementById('spacing-unit').value);
+            websiteData.styles.customCSS = document.getElementById('custom-css').value;
+            
+            // Apply font family globally
+            document.body.style.setProperty('--font-family', websiteData.styles.fontFamily);
+
+            saveToDatabase();
+            updateCssOutput();
+            showToast('Style settings saved successfully!', 'success');
+        };
+
+        const saveAdvancedSettings = () => {
+            websiteData.advanced.customJS = document.getElementById('custom-js').value;
+            websiteData.advanced.metaTags = document.getElementById('meta-tags').value;
+            websiteData.advanced.analyticsCode = document.getElementById('analytics-code').value;
+            websiteData.advanced.seoSettings = document.getElementById('seo-settings').value;
+            
+            saveToDatabase();
+            showToast('Advanced settings saved successfully!', 'success');
+        };
+
+        const saveAdminSettings = () => {
+            websiteData.adminSettings.darkMode = document.getElementById('dark-mode-toggle').checked;
+            websiteData.adminSettings.previewPanelVisible = document.getElementById('preview-panel-visibility').checked;
+            
+            saveToDatabase();
+            showToast('Admin settings saved successfully!', 'success');
+        }
+
+        const saveAllSettings = () => {
+            saveGeneralSettings();
+            saveHeaderSettings();
+            saveSidebarSettings();
+            saveContentSettings();
+            saveFooterSettings();
+            saveAnimationSettings();
+            saveImageSettings();
+            saveStyleSettings();
+            saveAdvancedSettings();
+            saveAdminSettings(); // Also save admin settings when saving all
+            showToast('All settings saved successfully!', 'success');
+        };
+
+        // Save to database (localStorage for demo)
+        const saveToDatabase = () => {
+            localStorage.setItem('websiteData', JSON.stringify(websiteData));
+            refreshPreview();
+        };
+
+        // Refresh the preview iframe
+        const refreshPreview = () => {
+            const previewFrame = document.getElementById('preview-frame');
+            previewFrame.contentWindow.postMessage({ type: 'updateData', data: websiteData }, '*'); // Send data to iframe
+            // previewFrame.contentWindow.location.reload(); // Also reload for good measure if content.html needs full refresh
+        };
+
+        // Show toast notification
+        const showToast = (message, type = 'success') => {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const toastIcon = toast.querySelector('i');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast'; // Reset classes
+            toast.classList.add('show');
+            toast.classList.add(`toast-${type}`);
+
+            // Update icon based on type
+            if (type === 'success') toastIcon.className = 'fas fa-check-circle';
+            else if (type === 'warning') toastIcon.className = 'fas fa-exclamation-triangle';
+            else if (type === 'danger') toastIcon.className = 'fas fa-times-circle';
+            else toastIcon.className = 'fas fa-info-circle';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
+        // Update CSS output for custom CSS and dynamic variables
+        const updateCssOutput = () => {
+            const cssOutput = document.getElementById('css-output');
+            
+            // Get values from style settings
+            const primaryColor = websiteData.styles.primaryColor;
+            const secondaryColor = websiteData.styles.secondaryColor;
+            const accentColor = websiteData.styles.accentColor;
+            const textColor = websiteData.styles.textColor;
+            const backgroundColor = websiteData.styles.backgroundColor;
+            const fontFamily = websiteData.styles.fontFamily;
+            const fontSize = websiteData.styles.fontSize;
+            const lineHeight = websiteData.styles.lineHeight;
+            const containerWidth = websiteData.styles.containerWidth;
+            const spacingUnit = websiteData.styles.spacingUnit;
+            const customCSS = websiteData.styles.customCSS;
+
+            const generatedCss = `:root {
+  --primary-color: ${primaryColor};
+  --secondary-color: ${secondaryColor};
+  --accent-color: ${accentColor};
+  --text-color: ${textColor};
+  --background-color: ${backgroundColor};
+  --font-family: ${fontFamily};
+  --base-font-size: ${fontSize}px;
+  --line-height: ${lineHeight};
+  --container-width: ${containerWidth}px;
+  --spacing-unit: ${spacingUnit}px;
+}
+
+/* Custom CSS */
+${customCSS}`;
+            
+            cssOutput.textContent = generatedCss;
+        };
+
+        // Handle image upload
+        const handleMediaUpload = (input) => {
+            if (input.files && input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const mockUrl = e.target.result; // Use base64 for demo
+                        
+                        const newMedia = {
+                            id: Date.now() + Math.random(), // Ensure unique ID
+                            url: mockUrl,
+                            name: file.name,
+                            type: file.type,
+                            uploadedAt: new Date().toISOString()
+                        };
+                        
+                        websiteData.media.push(newMedia);
+                        saveToDatabase();
+                        loadMediaLibrary();
+                        showToast(`"${file.name}" uploaded successfully!`, 'success');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        };
+
+        // Load media library
+        const loadMediaLibrary = () => {
+            const mediaLibrary = document.getElementById('media-library');
+            mediaLibrary.innerHTML = '';
+            
+            if (websiteData.media.length === 0) {
+                mediaLibrary.innerHTML = '<p style="text-align: center; color: var(--text-color);">No media items yet. Upload some images!</p>';
+                return;
+            }
+
+            websiteData.media.forEach(media => {
+                const mediaItem = document.createElement('div');
+                mediaItem.className = 'gallery-item';
+                mediaItem.innerHTML = `
+                    <img src="${media.url}" alt="${media.name}">
+                    <div class="actions">
+                        <button title="Use as Hero" onclick="useImage('${media.url}', 'hero')"><i class="fas fa-image"></i></button>
+                        <button title="Use as Content Image" onclick="useImage('${media.url}', 'content')"><i class="fas fa-align-left"></i></button>
+                        <button title="Delete" onclick="deleteMedia(${media.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                mediaLibrary.appendChild(mediaItem);
+            });
+        };
+
+        // Use image in specific section
+        const useImage = (url, section) => {
+            if (section === 'hero') {
+                document.getElementById('hero-image').value = url;
+                websiteData.images.hero = url;
+            } else if (section === 'content') {
+                document.getElementById('content-image').value = url;
+                websiteData.images.content = url;
+            } else if (section === 'header') { // Added for header logo
+                document.getElementById('header-logo').value = url;
+                websiteData.header.logo = url;
+            }
+            saveToDatabase();
+            showToast(`Image applied to ${section} section!`, 'success');
+        };
+
+        // Delete media item
+        const deleteMedia = (id) => {
+            if (confirm('Are you sure you want to delete this media item?')) {
+                websiteData.media = websiteData.media.filter(media => media.id !== id);
+                saveToDatabase();
+                loadMediaLibrary();
+                showToast('Media item deleted successfully!', 'success');
+            }
+        };
+
+        // Export data
+        const exportData = () => {
+            const dataStr = JSON.stringify(websiteData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'website-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            showToast('Website data exported!', 'success');
+        };
+
+        // Import data
+        const importData = () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        // Basic validation to ensure it's website data
+                        if (importedData.general && importedData.header && importedData.styles) {
+                            localStorage.setItem('websiteData', JSON.stringify(importedData));
+                            websiteData = initializeDatabase(); // Re-initialize with new data
+                            loadSettings();
+                            showToast('Data imported successfully!', 'success');
+                        } else {
+                            showToast('Error: Imported file does not seem to be valid website data.', 'danger');
+                        }
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        showToast('Error importing data. Invalid file format or corrupted data.', 'danger');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        };
+
+        // Reset to default settings
+        const resetSettings = () => {
+            if (confirm('Are you sure you want to reset ALL settings to default? This cannot be undone.')) {
+                localStorage.removeItem('websiteData');
+                websiteData = initializeDatabase(); // Revert to initial defaults
+                loadSettings(); // Load the default settings into the UI
+                showToast('All settings reset to default.', 'warning');
+            }
+        };
+
+        // Preview window dragging functionality
+        let isDragging = false;
+        let dragOffsetX, dragOffsetY;
+        const previewContainer = document.getElementById('preview-container');
+        const previewHeader = document.getElementById('preview-header');
+
+        previewHeader.addEventListener('mousedown', (e) => {
+            // Only drag if not clicking on buttons within the header
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'I') {
+                isDragging = true;
+                const rect = previewContainer.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+                previewContainer.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                // Calculate new position
+                let newLeft = e.clientX - dragOffsetX;
+                let newTop = e.clientY - dragOffsetY;
+
+                // Keep within viewport boundaries
+                const maxX = window.innerWidth - previewContainer.offsetWidth;
+                const maxY = window.innerHeight - previewContainer.offsetHeight;
+
+                newLeft = Math.max(0, Math.min(newLeft, maxX));
+                newTop = Math.max(0, Math.min(newTop, maxY));
+                
+                previewContainer.style.left = newLeft + 'px';
+                previewContainer.style.top = newTop + 'px';
+                previewContainer.style.right = 'unset'; // Important to unset right when setting left
+                previewContainer.style.bottom = 'unset'; // Important to unset bottom when setting top
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            previewContainer.style.cursor = 'grab';
+        });
+
+        // Preview window minimize functionality
+        const togglePreviewMinimize = () => {
+            previewContainer.classList.toggle('preview-minimized');
+        };
+
+        // Dark Mode Toggle
+        const toggleDarkMode = () => {
+            const isDarkMode = document.getElementById('dark-mode-toggle').checked;
+            applyDarkMode(isDarkMode);
+            websiteData.adminSettings.darkMode = isDarkMode;
+            saveToDatabase(); // Persist dark mode setting
+        };
+
+        const applyDarkMode = (isDarkMode) => {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        };
+
+        // Preview Panel Visibility Toggle
+        const togglePreviewPanelVisibility = () => {
+            const isVisible = document.getElementById('preview-panel-visibility').checked;
+            applyPreviewPanelVisibility(isVisible);
+            websiteData.adminSettings.previewPanelVisible = isVisible;
+            saveToDatabase(); // Persist visibility setting
+        };
+
+        const applyPreviewPanelVisibility = (isVisible) => {
+            const previewPanel = document.getElementById('preview-container');
+            if (isVisible) {
+                previewPanel.style.display = 'flex';
+            } else {
+                previewPanel.style.display = 'none';
+            }
+        };
+
+        // Simulate Logout
+        const simulateLogout = () => {
+            if (confirm('Are you sure you want to log out?')) {
+                // In a real application, this would clear session, redirect to login, etc.
+                showToast('You have been logged out (simulated).', 'info');
+                // For this demo, we can just clear local storage or redirect
+                // localStorage.clear(); 
+                // window.location.href = 'login.html'; // Example redirect
+            }
+        };
+
+        // Initialize the admin panel
+        window.onload = () => {
+            loadSettings();
+            
+            // Set initial cursor style for draggable header
+            previewHeader.style.cursor = 'grab';
+
+            // Add animation to toast on page load
+            setTimeout(() => {
+                showToast('Admin panel loaded successfully! 🚀', 'success');
+            }, 500);
+        };
+
+        // Listen for messages from the iframe (client.html) if needed
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'requestData') {
+                // Send websiteData to the iframe when requested
+                const previewFrame = document.getElementById('preview-frame');
+                previewFrame.contentWindow.postMessage({ type: 'loadData', data: websiteData }, '*');
+            }
+        });
+
+    </script>
+</body>
+</html>     
